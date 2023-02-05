@@ -1,0 +1,93 @@
+
+  apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    labels:
+      app: springboot-demo2-openshift
+    name: springboot-demo2-openshift
+    namespace: elmoselmos-dev
+  spec:
+    replicas: 2
+    selector:
+      matchLabels:
+        deployment: springboot-demo2-openshift
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          deployment: springboot-demo2-openshift
+      spec:
+        containers:
+        - image: image-registry.openshift-image-registry.svc:5000/elmoselmos-dev/springboot-demo-openshift@sha256:d6839249339d2833a865dbd3d5f08504dfaafa8ef50411311f36495d62e0eafd
+          imagePullPolicy: IfNotPresent
+          name: springboot-demo2-openshift
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          - containerPort: 8443
+            protocol: TCP
+          - containerPort: 8778
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+
+---
+  apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: "2023-02-05T16:32:52Z"
+    labels:
+      app: springboot-demo2-openshift
+      app.kubernetes.io/component: springboot-demo2-openshift
+      app.kubernetes.io/instance: springboot-demo2-openshift
+    name: springboot-demo2-openshift
+    namespace: elmoselmos-dev
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: 8443-tcp
+      port: 8443
+      protocol: TCP
+      targetPort: 8443
+    - name: 8778-tcp
+      port: 8778
+      protocol: TCP
+      targetPort: 8778
+    selector:
+      deployment: springboot-demo2-openshift
+    sessionAffinity: None
+    type: ClusterIP
+
+---
+  apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    labels:
+      app: springboot-demo2-openshift
+    name: springboot-demo2-openshift
+    namespace: elmoselmos-dev
+  spec:
+    host: springboot-demo2-openshift-elmoselmos-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com
+    port:
+      targetPort: 8080-tcp
+    to:
+      kind: Service
+      name: springboot-demo2-openshift
+      weight: 100
+    wildcardPolicy: None
+
