@@ -3,25 +3,12 @@ package com.learn.springbootkubernetes;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.time.format.DateTimeFormatter;  
-import java.time.LocalDateTime;    
-import java.util.Map;
-import java.io.*;
-
-
 @RestController
 public class Controller {
+
 @RequestMapping("/")
-
-public String index() throws UnknownHostException {
-//    return "Hello Spring-Boot app successfully deployed and running on Minishift";
-//}
-
-//@RequestMapping("/")
-//public String hello() throws UnknownHostException  
-//{
+public String hello() throws UnknownHostException  
+{
 
    String hostname = InetAddress.getLocalHost().getHostName();
 
