@@ -1,0 +1,75 @@
+package com.fincorp.controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.time.format.DateTimeFormatter;  
+import java.time.LocalDateTime;    
+import java.util.Map;
+import java.io.*;
+
+@RestController
+public class HelloWorldController 
+{
+
+@RequestMapping("/")
+public String hello() throws UnknownHostException  
+{
+
+   String hostname = InetAddress.getLocalHost().getHostName();
+
+   DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+   LocalDateTime now = LocalDateTime.now();  
+   
+   //String color = String.format("#%06x", Integer.parseInt(hostname));
+   String color = (String.format("#%h", hostname+hostname)).substring(0, 7);
+
+   StringBuffer sbf1 = new StringBuffer("<center> Hello <br><b>ELMOS DA</b><br> <br><br> From container Host: <br><b> <p style='color:" + color + ";'>" +  
+   hostname + //" , color: " + color + 
+   "</p><br><br>" + dtf.format(now) +
+   "</b><br> <br>----------------------------<br>SYSTEM ENV VARs : <br><br>");
+
+
+  // return "<center> Hello <br><b>ELMOS DA </b><br> comment vas tu ?<br><br> From: <br><b>" + InetAddress.getLocalHost().getHostName() + 
+  // "<br><br>" + dtf.format(now) +
+  // "</b><br> </center>";
+
+
+  Map<String, String> env = System.getenv();
+
+  for(String envName : env.keySet()){
+      sbf1.append("<b>" + envName + "</b>" + " : " +  env.get(envName));
+      sbf1.append("<br><br>");
+  }
+  
+
+  
+  // Check if the specified file
+  // Exists or not
+  try {
+
+   // Get the file
+   File file = new File(System.getenv("APP_FILE_CONFIG_PATH")); 
+ 
+   if (file.exists())
+   {
+     sbf1.append("</b><br> <br>----------------------------<br><b>APP CONFIG FILE</b> :  " + file + " : <br><br>"); 
+     BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+
+     String curLine;
+     while ((curLine = bufferedReader.readLine()) != null){
+            //process the line as required
+         sbf1.append(curLine + "<br>"); 
+     }
+     bufferedReader.close();
+   }          
+  } catch (Exception ex) {
+   sbf1.append("</b><br> <br>----------------------------<br>APP CONFIG FILE : NO FILE<br><br>") ; // Handle exception
+  }
+
+  sbf1.append("<br><br><br></center>");
+
+   return sbf1.toString();
+}
+
+}
