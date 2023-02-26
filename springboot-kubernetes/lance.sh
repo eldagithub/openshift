@@ -57,13 +57,6 @@ oc delete all,configmap,pvc,serviceaccount,rolebinding --selector app=springboot
 
 
 
-
-
-
-
-
-
-
 ------------
 oc new-app registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift~https://github.com/fmarchioni/masterspringboot.git --context-dir=demo-docker --name=springboot-demo-docker
 
@@ -71,4 +64,31 @@ oc new-app registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift~http
 
 oc new-app registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift~https://github.com/fmarchioni/masterspringboot.git --context-dir=demo-docker --name=springboot-demo-docker
 
+-----
+OCP HPA 
+
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hpa-demo
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: springboot-demo-openshift
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          averageUtilization: 20
+          type: Utilization
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          averageUtilization: 50
+          type: Utilization
 
